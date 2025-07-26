@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Visualização de Segurança Pública - SP</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="\Assets\CSS\style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <header class="sidebar-header">
+                <h2>Painel de Controle</h2>
+                <p>Segurança Pública - SP</p>
+            </header>
+            <nav class="filters">
+                <h3>Filtros</h3>
+                <div class="filter-group">
+                    <label for="ano-filter">Ano:</label>
+                    <select id="ano-filter"></select>
+                </div>
+                <div class="filter-group">
+                    <label for="mes-filter">Mês:</label>
+                    <select id="mes-filter"></select>
+                </div>
+                <div class="filter-group">
+                    <label for="delegacia-filter">Delegacia:</label>
+                    <select id="delegacia-filter"></select>
+                </div>
+                 <div class="filter-group">
+                    <label for="ocorrencia-filter">Tipo de Ocorrência:</label>
+                    <select id="ocorrencia-filter"></select>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="dashboard">
+            <div id="kpi-total" class="card kpi-card">
+                <h3>Total de Ocorrências: --</h3>
+            </div>
+            <div class="card chart-container" id="bar-chart-container">
+                <h3>Top 15 Delegacias</h3>
+                <svg id="bar-chart-delegacias"></svg>
+            </div>
+            <div class="card chart-container" id="donut-chart-container">
+                <h3>Distribuição por Ocorrência</h3>
+                <svg id="donut-chart-ocorrencias"></svg>
+            </div>
+            <div class="card chart-container" id="heatmap-container">
+                <h3>Mapa de Calor (Mês vs. Ocorrência)</h3>
+                <svg id="heatmap-chart"></svg>
+            </div>
+            <div class="card chart-container" id="line-chart-container">
+                <h3>Tendência Comparativa Anual</h3>
+                <svg id="line-chart-tendencia"></svg>
+            </div>
+            <div class="card chart-container" id="map-container">
+                <h3>Localização das Ocorrências por Delegacia</h3>
+                <svg id="map-chart"></svg>
+            </div>
+        </main>
+    </div>
+    <script src="\Assets\JavaScript\dashboard.js"></script>
+</body>
+</html>
