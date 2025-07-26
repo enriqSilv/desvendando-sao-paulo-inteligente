@@ -83,14 +83,13 @@ body {
 .chart-container svg { width: 100%; height: 100%; }
 
 .kpi-card,
-#line-chart-container {
+#line-chart-container,
+#map-container {
     grid-column: 1 / -1; 
 }
 
 #map-container {
-    grid-column: 1 / -1;
     height: 700px;
-    contain: content; /* Otimização de performance para o navegador */
 }
 
 .tooltip {
@@ -111,10 +110,29 @@ body {
 .legend-text { vertical-align: middle; }
 .heatmap-axis text { font-size: 11px; }
 
-.district { fill: #e9ecef; stroke: #ffffff; stroke-width: 1.5px; }
-.station-point { stroke: white; stroke-width: 1.5px; opacity: 0.8; cursor: pointer; transition: r 0.2s, opacity 0.2s; }
+.district {
+    fill: #e9ecef; /* Cor cinza padrão para os distritos */
+    stroke: #ffffff;
+    stroke-width: 1.5px;
+}
+.station-point {
+    stroke: white;
+    stroke-width: 1.5px;
+    opacity: 0.8;
+    cursor: pointer;
+    transition: r 0.2s, opacity 0.2s;
+}
+
 .station-point:hover { opacity: 1; stroke: #000; }
-.district-label { font-size: 10px; font-weight: 600; fill: #475569; text-anchor: middle; pointer-events: none; text-shadow: 0 0 2px #fff, 0 0 2px #fff; }
+
+.district-label {
+    font-size: 10px;
+    font-weight: 600;
+    fill: #475569;
+    text-anchor: middle;
+    pointer-events: none;
+    text-shadow: 0 0 2px #fff, 0 0 2px #fff;
+}
 
 @media (max-width: 1300px) {
     .dashboard { grid-template-columns: repeat(2, 1fr); }
