@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // URLs dos arquivos de dados
-    const dataUrl = './Data/dados_dashboard_long_format.csv';
-    const geoDelegaciasUrl = './Data/delegacias_geo.csv'; 
+    const dataUrl = './data/dados_dashboard_long_format.csv';
+    const geoDelegaciasUrl = './data/delegacias_geo.csv';
     const geoJsonUrl = 'https://raw.githubusercontent.com/codigourbano/distritos-sp/master/distritos-sp.geojson';
 
     const monthOrder = ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ... (Cole aqui as funções: populateFilters, getFilterValues, filterData, updateKPI, updateBarChart, updateDonutChart, updateLineChart, updateHeatmap da versão anterior) ...
     function populateFilters(data) {
         function populate(selector, values, sort = true) {
             const select = d3.select(selector);
@@ -175,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
         g.selectAll(".cell").data(dataHeatmap).join("rect").attr("x", d => x(d.month)).attr("y", d => y(d.type)).attr("width", x.bandwidth()).attr("height", y.bandwidth()).style("fill", d => color(d.value)).on("mouseover", (event, d) => { tooltip.style("opacity", 1).html(`<b>${d.type}</b><br>${d.month}: ${d.value.toLocaleString('pt-BR')}`); }).on("mousemove", event => tooltip.style("left", (event.pageX + 15) + "px").style("top", (event.pageY - 28) + "px")).on("mouseout", () => tooltip.style("opacity", 0));
     }
     
-    // ** FUNÇÃO DO MAPA REVERTIDA PARA A VERSÃO COM PONTOS E ZOOM **
     function updateMap(data, geojson, geoDelegacias) {
         const svg = d3.select(selectors.map);
         svg.selectAll("*").remove();
@@ -189,44 +187,45 @@ document.addEventListener('DOMContentLoaded', function() {
         const projection = d3.geoMercator().fitSize([width, height], geojson);
         const pathGenerator = d3.geoPath().projection(projection);
 
-        // Desenha o mapa base com cor cinza
         g.selectAll(".district").data(geojson.features).join("path").attr("class", "district").attr("d", pathGenerator);
-            
-        // Desenha os nomes dos distritos
         g.selectAll(".district-label").data(geojson.features).join("text").attr("class", "district-label").attr("transform", d => `translate(${pathGenerator.centroid(d)})`).text(d => pathGenerator.area(d) > 200 ? d.properties.NOME_DIST : '');
 
-        // Lógica para desenhar os pontos das delegacias
-        if (geoDelegacias && geoDelegacias.length > 0) {
-            const ocorrByDelegacia = d3.rollup(data, v => d3.sum(v, d => d.Ocorrencias), d => d.Delegacia);
-            const maxOcorr = d3.max(Array.from(ocorrByDelegacia.values())) || 1;
-            const radiusScale = d3.scaleSqrt().domain([0, maxOcorr]).range([3, 25]);
+        const delegaciasToPlot = (geoDelegacias && geoDelegacias.length > 0) ? 
+            (() => {
+                const ocorrByDelegacia = d3.rollup(data, v => d3.sum(v, d => d.Ocorrencias), d => d.Delegacia);
+                return geoDelegacias.map(geoDP => ({
+                    ...geoDP,
+                    ocorrencias: ocorrByDelegacia.get(geoDP.Delegacia) || 0
+                })).filter(d => d.ocorrencias > 0);
+            })() : [];
 
-            const delegaciasToPlot = geoDelegacias.map(geoDP => ({
-                ...geoDP,
-                ocorrencias: ocorrByDelegacia.get(geoDP.Delegacia) || 0,
-                radius: radiusScale(ocorrByDelegacia.get(geoDP.Delegacia) || 0)
-            })).filter(d => d.ocorrencias > 0);
-            
+        if (delegaciasToPlot.length > 0) {
+            const maxOcorr = d3.max(delegaciasToPlot, d => d.ocorrencias) || 1;
+            const radiusScale = d3.scaleSqrt().domain([0, maxOcorr]).range([3, 25]);
+            delegaciasToPlot.forEach(d => d.radius = radiusScale(d.ocorrencias));
+
             g.selectAll(".station-point").data(delegaciasToPlot.sort((a,b) => b.ocorrencias - a.ocorrencias)).join("circle")
                 .attr("class", "station-point")
                 .attr("transform", d => `translate(${projection([d.Longitude, d.Latitude])})`)
                 .attr("r", d => d.radius)
-                .attr("fill", "#d90429"); // Cor vermelha para os pontos
+                .attr("fill", "#d90429");
         }
 
-        // Lógica de Zoom
-        const zoom = d3.zoom().scaleExtent([1, 10]).translateExtent([[0, 0], [width, height]]).on("zoom", event => {
-            g.attr("transform", event.transform);
-        });
+        let isZooming = false;
+        const zoom = d3.zoom()
+            .scaleExtent([1, 10])
+            .translateExtent([[0, 0], [width, height]])
+            .on("start", () => isZooming = true)
+            .on("zoom", (event) => g.attr("transform", event.transform))
+            .on("end", () => isZooming = false);
 
-        // Lógica de Tooltip que funciona com Zoom
         svg.call(zoom)
            .on("mousemove", function(event) {
+                if (isZooming || delegaciasToPlot.length === 0) return; 
+
                 const [mx, my] = d3.pointer(event);
                 const currentTransform = d3.zoomTransform(svg.node());
                 
-                const delegaciasToPlot = geoDelegacias.map(geoDP => ({...geoDP, ocorrencias: (d3.rollup(data, v => d3.sum(v, d => d.Ocorrencias), d => d.Delegacia)).get(geoDP.Delegacia) || 0 }));
-
                 const closestPoint = d3.least(delegaciasToPlot, d => {
                     const [px, py] = projection([d.Longitude, d.Latitude]);
                     const [tx, ty] = currentTransform.apply([px, py]);
@@ -239,11 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const [px, py] = projection([closestPoint.Longitude, closestPoint.Latitude]);
                     const [tx, ty] = currentTransform.apply([px, py]);
                     const distance = Math.hypot(mx - tx, my - ty);
-                    
-                    const maxOcorr = d3.max(delegaciasToPlot, d => d.ocorrencias) || 1;
-                    const radiusScale = d3.scaleSqrt().domain([0, maxOcorr]).range([3, 25]);
-                    const radius = radiusScale(closestPoint.ocorrencias);
-                    const threshold = radius * currentTransform.k;
+                    const threshold = closestPoint.radius * currentTransform.k;
 
                     if (distance < threshold) {
                         tooltip.style("opacity", 1)
