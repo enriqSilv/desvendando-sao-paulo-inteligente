@@ -14,7 +14,7 @@ O objetivo é transformar dados brutos em insights visuais claros e acessíveis,
 
 O dashboard está publicado e pode ser acessado ao vivo através do GitHub Pages no seguinte link:
 
-**[https://SEU_NOME_DE_USUARIO.github.io/desvendando-sao-paulo-inteligente/](https://SEU_NOME_DE_USUARIO.github.io/desvendando-sao-paulo-inteligente/)**
+**https://enriqsilv.github.io/desvendando-sao-paulo-inteligente/**
 
 ---
 
