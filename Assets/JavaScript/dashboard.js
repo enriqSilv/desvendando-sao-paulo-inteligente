@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // URLs dos arquivos de dados
-    const dataUrl = './data/dados_dashboard_long_format.csv';
-    const geoDelegaciasUrl = './data/delegacias_geo.csv';
+    const dataUrl = './Data/dados_dashboard_long_format.csv';
+    const geoDelegaciasUrl = './Data/delegacias_geo.csv';
     const geoJsonUrl = 'https://raw.githubusercontent.com/codigourbano/distritos-sp/master/distritos-sp.geojson';
 
     const monthOrder = ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
