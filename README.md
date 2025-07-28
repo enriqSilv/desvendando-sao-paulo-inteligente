@@ -62,6 +62,7 @@ O projeto está organizado da seguinte forma para manter a clareza e a manutenib
 └── 📁 data/                   (Arquivos de dados)
     ├── dados_dashboard_long_format.csv
     └── delegacias_geo.csv
+    └── archives.py
 ```
 
 ---
