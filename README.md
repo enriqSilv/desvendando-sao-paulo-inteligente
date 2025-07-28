@@ -40,7 +40,7 @@ Este projeto foi construído utilizando tecnologias web modernas, com foco na ma
 * **CSS3:** Estilização, layout (CSS Grid) e responsividade.
 * **JavaScript (ES6+):** Lógica principal do dashboard e interatividade.
 * **D3.js (v7):** A principal biblioteca para a visualização de dados, utilizada para criar todos os gráficos e o mapa.
-* **Python com Pandas:** Utilizado em um script auxiliar para a limpeza e transformação inicial dos dados brutos (de formato "wide" para "long").
+* **Python com Pandas:** Utilizado em um script auxiliar para a limpeza e transformação inicial dos dados brutos (de formato "wide" para "long"). Antes de utilizar o Script faça Download dos arquivos no portal SSP: **https://www.ssp.sp.gov.br/estatistica/dados-mensais**
 
 ---
 
